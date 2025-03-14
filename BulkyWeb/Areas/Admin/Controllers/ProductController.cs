@@ -109,26 +109,26 @@ namespace BulkyWeb.Areas.Admin.Controllers
             
         }
 
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
-            return View(productFromDb);
-        }
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null || id == 0)
+        //    {
+        //        return NotFound();
+        //    }
+        //    Product productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
+        //    return View(productFromDb);
+        //}
 
-        [HttpPost]
-        [ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
-        {
-            Product productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
-            _unitOfWork.Product.Remove(productFromDb);
-            _unitOfWork.Save();
-            TempData["success"] = "Product deleted successfully";
-            return RedirectToAction("Index");
-        }
+        //[HttpPost]
+        //[ActionName("Delete")]
+        //public IActionResult DeletePOST(int? id)
+        //{
+        //    Product productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
+        //    _unitOfWork.Product.Remove(productFromDb);
+        //    _unitOfWork.Save();
+        //    TempData["success"] = "Product deleted successfully";
+        //    return RedirectToAction("Index");
+        //}
 
         #region API CALLS
         [HttpGet]
