@@ -86,7 +86,13 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
-            if(applicationUser.CompanyId == 0)
+            if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+            {
+                ModelState.AddModelError(string.Empty, "Your cart is empty. Please add items to your cart before placing an order.");
+                return View("Summary", ShoppingCartVM);
+            }
+
+            if (string.IsNullOrEmpty(applicationUser.CompanyId.ToString()))
             {
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
                 ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
@@ -123,8 +129,26 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 return RedirectToAction(nameof(OrderConfirmation), new {ShoppingCartVM.OrderHeader.Id});
         }
 
+
+
         public IActionResult OrderConfirmation(int id)
         {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
+           
+            if (orderHeader == null)
+            {
+                return NotFound();
+            }
+
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            if (shoppingCarts == null || !shoppingCarts.Any())
+            {
+                return NotFound();
+            }
+
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
+
             return View(id);
         }
 
