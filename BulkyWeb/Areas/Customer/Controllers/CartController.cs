@@ -147,6 +147,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
 
             _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            HttpContext.Session.Clear();
             _unitOfWork.Save();
 
             return View(id);
